@@ -6,6 +6,7 @@ use App\Models\Staff;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class StaffController extends Controller
 {
@@ -45,7 +46,7 @@ class StaffController extends Controller
 
         Staff::create($request->all());
 
-        return redirect()->route('staff.index')->with('success', 'Staff created successfully.');
+        return redirect()->route('admin.staff.index')->with('success', 'Staff created successfully.');
     }
 
     /**
@@ -77,6 +78,7 @@ class StaffController extends Controller
             'role' => 'required|string|max:255',
             'email' => 'required|email|unique:staff,email,' . $id,
             'user_id' => 'nullable|exists:users,id',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -84,9 +86,25 @@ class StaffController extends Controller
         }
 
         $staff = Staff::findOrFail($id);
-        $staff->update($request->all());
+        $staff->update($request->except('profile_picture'));
 
-        return redirect()->route('staff.index')->with('success', 'Staff updated successfully.');
+        // Handle profile picture upload if user is linked
+        if ($request->hasFile('profile_picture') && $staff->user_id) {
+            $user = User::find($staff->user_id);
+            if ($user) {
+                // Delete old profile picture if exists
+                if ($user->profile_picture && Storage::disk('public')->exists($user->profile_picture)) {
+                    Storage::disk('public')->delete($user->profile_picture);
+                }
+
+                // Store new profile picture
+                $path = $request->file('profile_picture')->store('profile_pictures', 'public');
+                $user->profile_picture = $path;
+                $user->save();
+            }
+        }
+
+        return redirect()->route('admin.staff.index')->with('success', 'Staff updated successfully.');
     }
 
     /**
@@ -97,6 +115,6 @@ class StaffController extends Controller
         $staff = Staff::findOrFail($id);
         $staff->delete();
 
-        return redirect()->route('staff.index')->with('success', 'Staff deleted successfully.');
+        return redirect()->route('admin.staff.index')->with('success', 'Staff deleted successfully.');
     }
 }

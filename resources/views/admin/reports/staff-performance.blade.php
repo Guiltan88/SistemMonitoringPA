@@ -5,15 +5,15 @@
     <div class="page-title">
         <div class="row">
             <div class="col-12 col-md-6 order-md-1 order-last">
-                <h3>Project Status Report</h3>
-                <p class="text-subtitle text-muted">Detailed project status overview</p>
+                <h3>Staff Performance Report</h3>
+                <p class="text-subtitle text-muted">Detailed staff performance overview</p>
             </div>
             <div class="col-12 col-md-6 order-md-2 order-first">
                 <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
                         <li class="breadcrumb-item"><a href="{{ route('admin.reports.index') }}">Reports</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Project Status</li>
+                        <li class="breadcrumb-item active" aria-current="page">Staff Performance</li>
                     </ol>
                 </nav>
             </div>
@@ -23,7 +23,7 @@
         <div class="card">
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h4>All Projects</h4>
+                    <h4>All Staff Performance</h4>
                     <a href="{{ route('admin.reports.index') }}" class="btn btn-secondary">Back to Reports</a>
                 </div>
             </div>
@@ -31,36 +31,42 @@
                 <table class="table table-striped" id="table1">
                     <thead>
                         <tr>
-                            <th>Title</th>
-                            <th>Description</th>
-                            <th>Status</th>
-                            <th>Assigned Staff</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Total Projects</th>
+                            <th>Completed Projects</th>
+                            <th>Pending Projects</th>
+                            <th>In Progress Projects</th>
+                            <th>Performance Score</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($projects as $project)
+                        @forelse($staff as $member)
                             <tr>
-                                <td>{{ $project->title }}</td>
-                                <td>{{ Str::limit($project->description, 50) }}</td>
+                                <td>{{ $member->name }}</td>
+                                <td>{{ $member->email }}</td>
+                                <td>{{ $member->projects_count }}</td>
+                                <td>{{ $member->projects->where('status', 'completed')->count() }}</td>
+                                <td>{{ $member->projects->where('status', 'pending')->count() }}</td>
+                                <td>{{ $member->projects->where('status', 'in_progress')->count() }}</td>
                                 <td>
+                                    @php
+                                        $completed = $member->projects->where('status', 'completed')->count();
+                                        $total = $member->projects_count;
+                                        $score = $total > 0 ? round(($completed / $total) * 100, 2) : 0;
+                                    @endphp
                                     <span class="badge
-                                        @if($project->status == 'pending') bg-warning
-                                        @elseif($project->status == 'in_progress') bg-primary
-                                        @elseif($project->status == 'completed') bg-success
+                                        @if($score >= 80) bg-success
+                                        @elseif($score >= 60) bg-warning
                                         @else bg-danger
                                         @endif">
-                                        {{ ucfirst(str_replace('_', ' ', $project->status)) }}
+                                        {{ $score }}%
                                     </span>
                                 </td>
-                                <td>{{ $project->assignedStaff ? $project->assignedStaff->name : 'Not Assigned' }}</td>
-                                <td>{{ $project->start_date ? $project->start_date->format('d/m/Y') : '-' }}</td>
-                                <td>{{ $project->end_date ? $project->end_date->format('d/m/Y') : '-' }}</td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center">No projects found.</td>
+                                <td colspan="7" class="text-center">No staff found.</td>
                             </tr>
                         @endforelse
                     </tbody>

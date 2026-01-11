@@ -12,7 +12,7 @@
                     <h4>Staff Details</h4>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('staff.store') }}" method="POST">
+                    <form action="{{ route('admin.staff.store') }}" method="POST">
                         @csrf
                         <div class="row">
                             <div class="col-md-6">
@@ -54,7 +54,7 @@
                             @enderror
                         </div>
                         <button type="submit" class="btn btn-primary">Create Staff</button>
-                        <a href="{{ route('staff.index') }}" class="btn btn-secondary">Cancel</a>
+                        <a href="{{ route('admin.staff.index') }}" class="btn btn-secondary">Cancel</a>
                     </form>
                 </div>
             </div>

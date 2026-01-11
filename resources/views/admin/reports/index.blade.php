@@ -11,7 +11,7 @@
             <div class="col-12 col-md-6 order-md-2 order-first">
                 <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Reports</li>
                     </ol>
                 </nav>
@@ -100,8 +100,8 @@
                     </div>
                     <div class="card-body">
                         <div class="d-grid gap-2">
-                            <a href="{{ route('reports.project-status') }}" class="btn btn-outline-primary">Project Status Report</a>
-                            <a href="{{ route('reports.staff-performance') }}" class="btn btn-outline-secondary">Staff Performance Report</a>
+                            <a href="{{ route('admin.reports.project-status') }}" class="btn btn-outline-primary">Project Status Report</a>
+                            <a href="{{ route('admin.reports.staff-performance') }}" class="btn btn-outline-secondary">Staff Performance Report</a>
                         </div>
                     </div>
                 </div>

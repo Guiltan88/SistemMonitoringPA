@@ -67,7 +67,7 @@ class ProjectController extends Controller
 
         Project::create($request->all());
 
-        return redirect()->route('projects.index')->with('success', 'Project created successfully.');
+        return redirect()->route('admin.projects.index')->with('success', 'Project created successfully.');
     }
 
     /**
@@ -95,11 +95,16 @@ class ProjectController extends Controller
     public function edit(string $id)
     {
         $user = auth()->user();
+        $project = Project::findOrFail($id);
+
+        // Staff can only edit their assigned projects
         if ($user->hasRole('staff')) {
-            abort(403, 'Unauthorized');
+            $staff = $user->staff;
+            if (!$staff || $project->assigned_staff_id != $staff->id) {
+                abort(403, 'Unauthorized');
+            }
         }
 
-        $project = Project::findOrFail($id);
         $staff = Staff::all();
         return view('admin.projects.edit', compact('project', 'staff'));
     }
@@ -109,6 +114,19 @@ class ProjectController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $user = auth()->user();
+        $project = Project::findOrFail($id);
+
+        // Staff can only update their assigned projects
+        if ($user->hasRole('staff')) {
+            $staff = $user->staff;
+            if (!$staff || $project->assigned_staff_id != $staff->id) {
+                abort(403, 'Unauthorized');
+            }
+            // Staff cannot change assigned_staff_id
+            $request->merge(['assigned_staff_id' => $project->assigned_staff_id]);
+        }
+
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'mahasiswa_name' => 'required|string|max:255',
@@ -123,7 +141,6 @@ class ProjectController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $project = Project::findOrFail($id);
         $project->update($request->all());
 
         return redirect()->route('projects.index')->with('success', 'Project updated successfully.');
@@ -142,6 +159,6 @@ class ProjectController extends Controller
         $project = Project::findOrFail($id);
         $project->delete();
 
-        return redirect()->route('projects.index')->with('success', 'Project deleted successfully.');
+        return redirect()->route('admin.projects.index')->with('success', 'Project deleted successfully.');
     }
 }

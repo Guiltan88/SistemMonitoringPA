@@ -12,7 +12,7 @@
                     <h4>Staff Details</h4>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('staff.update', $staff) }}" method="POST">
+                    <form action="{{ route('admin.staff.update', $staff) }}" method="POST">
                         @csrf
                         @method('PUT')
                         <div class="row">
@@ -54,8 +54,18 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div class="form-group">
+                            <label for="profile_picture">Profile Picture</label>
+                            <input type="file" class="form-control @error('profile_picture') is-invalid @enderror" id="profile_picture" name="profile_picture" accept="image/*">
+                            @if($staff->user && $staff->user->profile_picture)
+                                <img src="{{ asset('storage/' . $staff->user->profile_picture) }}" alt="Current Profile Picture" style="max-width: 100px; margin-top: 10px;">
+                            @endif
+                            @error('profile_picture')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                         <button type="submit" class="btn btn-primary">Update Staff</button>
-                        <a href="{{ route('staff.index') }}" class="btn btn-secondary">Cancel</a>
+                        <a href="{{ route('admin.staff.index') }}" class="btn btn-secondary">Cancel</a>
                     </form>
                 </div>
             </div>

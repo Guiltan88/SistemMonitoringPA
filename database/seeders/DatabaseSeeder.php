@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
         // Create roles
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
         $staffRole = Role::firstOrCreate(['name' => 'staff']);
-        $studentRole = Role::firstOrCreate(['name' => 'student']);
+        $mahasiswaRole = Role::firstOrCreate(['name' => 'mahasiswa']);
 
         // Create permissions
         $manageUsers = Permission::firstOrCreate(['name' => 'manage users']);
@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
         // Assign permissions to roles
         $adminRole->givePermissionTo([$manageUsers, $manageProjects, $manageStaff, $viewDashboard]);
         $staffRole->givePermissionTo([$manageProjects, $viewDashboard]);
-        $studentRole->givePermissionTo([$viewDashboard]);
+        $mahasiswaRole->givePermissionTo([$viewDashboard]);
 
         // Create Admin Account
         $admin = User::firstOrCreate([

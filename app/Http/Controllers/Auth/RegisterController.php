@@ -48,11 +48,20 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
-        return Validator::make($data, [
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
+            'role' => ['required', 'in:mahasiswa,staff'],
+        ];
+
+        if (isset($data['role']) && $data['role'] === 'mahasiswa') {
+            $rules['student_id'] = ['required', 'string', 'unique:users'];
+            $rules['department'] = ['required', 'string', 'max:255'];
+            $rules['study_program'] = ['required', 'string', 'max:255'];
+        }
+
+        return Validator::make($data, $rules);
     }
 
     /**
@@ -63,10 +72,21 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'student_id' => $data['student_id'] ?? null,
+            'department' => $data['department'] ?? null,
+            'study_program' => $data['study_program'] ?? null,
         ]);
+
+        // Assign role to the user
+        if (isset($data['role'])) {
+            $role = \Spatie\Permission\Models\Role::firstOrCreate(['name' => $data['role']]);
+            $user->assignRole($role);
+        }
+
+        return $user;
     }
 }

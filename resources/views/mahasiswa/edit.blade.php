@@ -12,7 +12,7 @@
                     <h4>Project Details</h4>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('admin.projects.update', $project) }}" method="POST">
+                    <form action="{{ route('mahasiswa.update', $project) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="row">
@@ -30,23 +30,6 @@
                                     <label for="mahasiswa_name">Mahasiswa Name</label>
                                     <input type="text" class="form-control @error('mahasiswa_name') is-invalid @enderror" id="mahasiswa_name" name="mahasiswa_name" value="{{ old('mahasiswa_name', $project->mahasiswa_name) }}" required>
                                     @error('mahasiswa_name')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="status">Status</label>
-                                    <select class="form-control @error('status') is-invalid @enderror" id="status" name="status" required>
-                                        <option value="">Select Status</option>
-                                        <option value="pending" {{ old('status', $project->status) == 'pending' ? 'selected' : '' }}>Pending</option>
-                                        <option value="in_progress" {{ old('status', $project->status) == 'in_progress' ? 'selected' : '' }}>In Progress</option>
-                                        <option value="completed" {{ old('status', $project->status) == 'completed' ? 'selected' : '' }}>Completed</option>
-                                        <option value="cancelled" {{ old('status', $project->status) == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                                    </select>
-                                    @error('status')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -80,19 +63,17 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="assigned_staff_id">Assigned Staff</label>
-                            <select class="form-control @error('assigned_staff_id') is-invalid @enderror" id="assigned_staff_id" name="assigned_staff_id">
-                                <option value="">Select Staff</option>
-                                @foreach($staff as $member)
-                                    <option value="{{ $member->id }}" {{ old('assigned_staff_id', $project->assigned_staff_id) == $member->id ? 'selected' : '' }}>{{ $member->name }} ({{ $member->role }})</option>
-                                @endforeach
-                            </select>
-                            @error('assigned_staff_id')
+                            <label for="file">Project File (PDF, DOC, DOCX - Max 10MB)</label>
+                            <input type="file" class="form-control @error('file') is-invalid @enderror" id="file" name="file" accept=".pdf,.doc,.docx">
+                            @if($project->file_path)
+                                <small class="form-text text-muted">Current file: <a href="{{ Storage::url($project->file_path) }}" target="_blank">{{ basename($project->file_path) }}</a></small>
+                            @endif
+                            @error('file')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                         <button type="submit" class="btn btn-primary">Update Project</button>
-                        <a href="{{ route('admin.projects.index') }}" class="btn btn-secondary">Cancel</a>
+                        <a href="{{ route('mahasiswa.show', $project) }}" class="btn btn-secondary">Cancel</a>
                     </form>
                 </div>
             </div>

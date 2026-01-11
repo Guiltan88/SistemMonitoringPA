@@ -5,7 +5,7 @@
         <div class="sidebar-header">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="logo">
-                    <a href="{{ route('dashboard') }}" class="fw-bold">
+                    <a href="{{ route('admin.dashboard') }}" class="fw-bold">
                         Monitoring PA
                     </a>
                 </div>
@@ -24,8 +24,8 @@
             <ul class="menu">
 
                 {{-- DASHBOARD --}}
-                <li class="sidebar-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                    <a href="{{ route('dashboard') }}" class="sidebar-link">
+                <li class="sidebar-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                    <a href="{{ route('admin.dashboard') }}" class="sidebar-link">
                         <i class="bi bi-house-fill"></i>
                         <span>Dashboard</span>
                     </a>
@@ -34,22 +34,29 @@
                 {{-- ================= ADMIN ================= --}}
                 @if(auth()->check() && auth()->user()->hasRole('admin'))
 
-                <li class="sidebar-item {{ request()->routeIs('projects.*') ? 'active' : '' }}">
-                    <a href="{{ route('projects.index') }}" class="sidebar-link">
+                <li class="sidebar-item {{ request()->routeIs('admin.projects.*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.projects.index') }}" class="sidebar-link">
                         <i class="bi bi-folder-fill"></i>
                         <span>Project Management</span>
                     </a>
                 </li>
 
-                <li class="sidebar-item {{ request()->routeIs('staff.*') ? 'active' : '' }}">
-                    <a href="{{ route('staff.index') }}" class="sidebar-link">
+                <li class="sidebar-item {{ request()->routeIs('admin.staff.*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.staff.index') }}" class="sidebar-link">
                         <i class="bi bi-people-fill"></i>
                         <span>Staff Management</span>
                     </a>
                 </li>
 
-                <li class="sidebar-item {{ request()->routeIs('reports.*') ? 'active' : '' }}">
-                    <a href="{{ route('reports.index') }}" class="sidebar-link">
+                <li class="sidebar-item {{ request()->routeIs('admin.mahasiswa.*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.mahasiswa.index') }}" class="sidebar-link">
+                        <i class="bi bi-people-fill"></i>
+                        <span>Mahasiswa Management</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.reports.index') }}" class="sidebar-link">
                         <i class="bi bi-bar-chart-fill"></i>
                         <span>Reports</span>
                     </a>
@@ -58,16 +65,14 @@
 
                 {{-- ================= STAFF ================= --}}
                 @role('staff')
-                <li class="sidebar-item">
-                    <a href="#" class="sidebar-link d-flex align-items-center">
+                <li class="sidebar-item {{ request()->routeIs('admin.projects.*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.projects.index') }}" class="sidebar-link d-flex align-items-center">
                         <i class="bi bi-folder-fill"></i>
                         <span>My Projects</span>
 
                         @php
-                            $myProjectsCount = \App\Models\Project::where(
-                                'assigned_staff_id',
-                                auth()->id()
-                            )->count();
+                            $staff = auth()->user()->staff;
+                            $myProjectsCount = $staff ? \App\Models\Project::where('assigned_staff_id', $staff->id)->count() : 0;
                         @endphp
 
                         @if($myProjectsCount > 0)
@@ -78,27 +83,42 @@
                     </a>
                 </li>
 
-                <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
-                        <i class="bi bi-pencil-square"></i>
-                        <span>Project Updates</span>
+
+                @endrole
+
+                {{-- ================= STAFF MAHASISWA ================= --}}
+                @role('staff')
+                <li class="sidebar-item {{ request()->routeIs('admin.staff.mahasiswa.*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.staff.mahasiswa.index') }}" class="sidebar-link">
+                        <i class="bi bi-people-fill"></i>
+                        <span>Mahasiswa</span>
                     </a>
                 </li>
                 @endrole
 
-                {{-- ================= STUDENT ================= --}}
-                @if(auth()->check() && auth()->user()->hasRole('student'))
-                <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+                {{-- ================= MAHASISWA ================= --}}
+                @if(auth()->check() && auth()->user()->hasRole('mahasiswa'))
+                    @php
+                        // Ensure mahasiswa role exists
+                        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'mahasiswa']);
+                    @endphp
+
+                    <li class="sidebar-title">
+                        <i class="bx bx-graduation"></i> Mahasiswa
+                    </li>
+                @endif
+                @if(auth()->check() && auth()->user()->hasRole('mahasiswa'))
+                <li class="sidebar-item {{ request()->routeIs('mahasiswa.*') ? 'active' : '' }}">
+                    <a href="{{ route('mahasiswa.index') }}" class="sidebar-link">
                         <i class="bi bi-book-fill"></i>
-                        <span>My Final Project</span>
+                        <span>My Projects</span>
                     </a>
                 </li>
 
                 <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
-                        <i class="bi bi-graph-up"></i>
-                        <span>Progress Tracking</span>
+                    <a href="{{ route('mahasiswa.create') }}" class="sidebar-link">
+                        <i class="bi bi-plus-circle-fill"></i>
+                        <span>Submit New Project</span>
                     </a>
                 </li>
                 @endif

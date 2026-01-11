@@ -11,8 +11,8 @@
             <div class="col-12 col-md-6 order-md-2 order-first">
                 <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('staff.index') }}">Staff</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.staff.index') }}">Staff</a></li>
                         <li class="breadcrumb-item active" aria-current="page">View</li>
                     </ol>
                 </nav>
@@ -25,8 +25,8 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h4>{{ $staff->name }}</h4>
                     <div>
-                        <a href="{{ route('staff.edit', $staff) }}" class="btn btn-warning">Edit</a>
-                        <a href="{{ route('staff.index') }}" class="btn btn-secondary">Back to List</a>
+                        <a href="{{ route('admin.staff.edit', $staff) }}" class="btn btn-warning">Edit</a>
+                        <a href="{{ route('admin.staff.index') }}" class="btn btn-secondary">Back to List</a>
                     </div>
                 </div>
             </div>
@@ -61,7 +61,7 @@
                             <ul class="list-group">
                                 @foreach($staff->projects as $project)
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        {{ $project->title }}
+                                        <a href="{{ route('projects.show', $project) }}" class="text-decoration-none">{{ $project->title }}</a>
                                         <span class="badge bg-primary">{{ $project->status }}</span>
                                     </li>
                                 @endforeach

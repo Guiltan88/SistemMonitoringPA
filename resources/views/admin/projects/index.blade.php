@@ -11,7 +11,7 @@
             <div class="col-12 col-md-6 order-md-2 order-first">
                 <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Projects</li>
                     </ol>
                 </nav>
@@ -23,7 +23,7 @@
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
                     <h4>All Projects</h4>
-                    <a href="{{ route('projects.create') }}" class="btn btn-primary">Add New Project</a>
+                    <a href="{{ route('admin.projects.create') }}" class="btn btn-primary">Add New Project</a>
                 </div>
             </div>
             <div class="card-body">
@@ -63,9 +63,9 @@
                                 <td>{{ $project->start_date ? $project->start_date->format('d/m/Y') : '-' }}</td>
                                 <td>{{ $project->end_date ? $project->end_date->format('d/m/Y') : '-' }}</td>
                                 <td>
-                                    <a href="{{ route('projects.show', $project) }}" class="btn btn-sm btn-info">View</a>
-                                    <a href="{{ route('projects.edit', $project) }}" class="btn btn-sm btn-warning">Edit</a>
-                                    <form action="{{ route('projects.destroy', $project) }}" method="POST" style="display: inline;">
+                                    <a href="{{ route('admin.projects.show', $project) }}" class="btn btn-sm btn-info">View</a>
+                                    <a href="{{ route('admin.projects.edit', $project) }}" class="btn btn-sm btn-warning">Edit</a>
+                                    <form action="{{ route('admin.projects.destroy', $project) }}" method="POST" style="display: inline;">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
